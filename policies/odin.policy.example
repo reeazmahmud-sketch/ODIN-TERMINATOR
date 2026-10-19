@@ -1,0 +1,25 @@
+# Illustrative policy syntax; parser/semantics must be versioned before implementation.
+POLICY_VERSION 1
+
+PROJECT FINAL {
+  ALLOW read
+  DENY write, delete, move, dependency_change
+}
+
+AGENT browser {
+  TRUST 1
+  ALLOW browser.read, browser.navigate
+  REQUIRE_AUTH browser.submit, browser.credentials
+  DENY filesystem.write, system.write
+}
+
+AGENT refactor {
+  TRUST 2
+  ALLOW code.write WHEN project.state == ACTIVE
+  DENY dependency.delete, system.write
+}
+
+SYSTEM {
+  REQUIRE_AUTH snapshot.restore, project.unlock, privileged.write
+  DENY protected_system_volume.write
+}
